@@ -1,26 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {AuthButton, LoggedOut, LoggedIn} from '@solid/react'
+import Dashboard from './Dashboard';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <>
+            <LoggedOut>
+                <div>
+                    <h1>You are not logged in 😒</h1>
+                </div>
+            </LoggedOut>
+            <LoggedIn>
+                <Dashboard />
+            </LoggedIn>
+            <AuthButton popup="popup.html" login="Login here!" logout="Log me out" />
+        </>
+    );
 }
 
 export default App;
