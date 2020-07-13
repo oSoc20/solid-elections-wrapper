@@ -55,12 +55,12 @@ export async function addDummyText(appContainer: TripleDocument) {
     return await personDoc.save([person]);
 }
 
-async function fetchPublicTypeIndex(profile: TripleSubject) {
+async function fetchPublicTypeIndex(profile: TripleSubject): Promise<TripleDocument | null> {
     const publicTypeIndexRef = profile.getRef(solid.publicTypeIndex);
     return publicTypeIndexRef ? await fetchDocument(publicTypeIndexRef) : null
 }
 
-async function createAppFolder(appFolderPath: string) {
+async function createAppFolder(appFolderPath: string): Promise<TripleDocument> {
     const split = appFolderPath.lastIndexOf('/');
     const parentFolderPath = appFolderPath.substr(0, split);
     const applicationFolderName = appFolderPath.substr(split + 1);

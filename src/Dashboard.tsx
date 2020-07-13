@@ -4,9 +4,9 @@ import {fetchDocument, TripleDocument} from 'tripledoc';
 import {foaf} from 'rdf-namespaces';
 import {initializeDataFolder, addDummyText} from './SolidWrapper';
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
     const webId = useWebId();
-    const [name, setName] = useState('undefined');
+    const [name, setName] = useState<string>('undefined');
     const [appContainer, setAppContainer] = useState<TripleDocument>();
     useEffect(() => {
         const getName = async (webId: string) => {
