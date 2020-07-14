@@ -16,6 +16,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "solid-auth-client": "^2.4.1",
     "tripledoc": "^4.3.4",
     "typescript": "~3.7.2"
   },
