@@ -2,7 +2,7 @@
 Goal: Creating an app folder inside a Solid Pod and writing a document in this folder
 
 ## How it works?
-See src/Dashboard.tsx and src/SolidWrapper.ts for more documentation.
+See src/Dashboard.tsx and src/appStorage.ts for more documentation.
 
 ## Installation
 ```
