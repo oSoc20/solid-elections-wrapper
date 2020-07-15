@@ -38,12 +38,12 @@ const Dashboard: React.FC = () => {
                 if (appStorage) {
                     const doc = createAppDocument(appStorage, 'dummytest.ttl')
                     const person = doc.addSubject();
-                    person.addRef(foaf.firstName, 'John');
-                    person.addRef(foaf.lastName, 'Smith');
+                    person.addString(foaf.firstName, 'John Smith');
+                    person.addString(foaf.lastName, 'Smith');
                     doc.save([person]);
                 }
             }}>Add a dummy Person</button>
-            <button onClick={() => appStorage ? console.log(listDocuments(appStorage)) : null}>List Documents</button>
+            <button onClick={() => appStorage ? console.log(listDocuments(appStorage)) : console.log("NO APP STORAGE")}>List Documents</button>
         </>
     );
 };

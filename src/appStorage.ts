@@ -1,4 +1,4 @@
-import {fetchDocument, createDocument, TripleDocument, TripleSubject, LocalTripleDocumentWithRef} from 'tripledoc';
+import {fetchDocument, createDocument, TripleDocument, TripleSubject, LocalTripleDocumentForContainer} from 'tripledoc';
 import {solid, space, rdf, ldp} from 'rdf-namespaces';
 import auth from 'solid-auth-client';
 
@@ -44,7 +44,7 @@ export async function initAppStorage(webID: string, appName: string, initEmpty: 
         }
     }
 
-    if(initEmpty) {
+    if(!initEmpty) {
         throw new Error("Application folder was not found inside the user's Solid Pod")
     }
 
@@ -81,7 +81,7 @@ export async function initAppStorage(webID: string, appName: string, initEmpty: 
  * ```
  *
  */
-export function createAppDocument(appStorage: TripleDocument, docName: string): LocalTripleDocumentWithRef {
+export function createAppDocument(appStorage: TripleDocument, docName: string): LocalTripleDocumentForContainer {
     const documentRef = appStorage.asRef() + `/${docName}`;
     return createDocument(documentRef);
 }
@@ -95,7 +95,12 @@ export function createAppDocument(appStorage: TripleDocument, docName: string): 
  *
  */
 export function listDocuments(appStorage: TripleDocument): string[] {
-    return appStorage.findSubjects(rdf.type, ldp.Resource).map(subject => subject.asRef());
+    return appStorage.findSubjects(rdf.type, ldp.Resource).map(subject => {
+        const subjectRef = subject.asRef();
+        const split = subject.asRef().lastIndexOf('/');
+        const fileName = subjectRef.substr(split + 1);
+        return appStorage.asRef() + `/${fileName}`;
+    });
 }
 
 async function fetchPublicTypeIndex(profile: TripleSubject): Promise<TripleDocument | null> {
