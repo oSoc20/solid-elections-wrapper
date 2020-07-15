@@ -2,9 +2,11 @@
   "name": "solid-wrapper",
   "version": "0.1.0",
   "description": "Wrapper to create an app directory on a Solid Pod",
-  "main": "src/appStorage.js",
+  "main": "dist/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

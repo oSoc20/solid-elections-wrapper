@@ -1,19 +1,9 @@
-# Proof of Concept: Solid Pod interaction
-Goal: Creating an app folder inside a Solid Pod and writing a document in this folder
+# Solid Wrapper
+This package provides a wrapper around a Solid Pod. It allows the creation of an application directory.
 
-## How it works?
-See src/Dashboard.tsx and src/appStorage.ts for more documentation.
 
 ## Installation
 ```
-npm install
-#or
-yarn install
+npm install https://github.com/oSoc20/solid-elections-poc-wrapper
 ```
 
-## Start development server
-```
-npm run start
-#or
-yarn run start
-```
