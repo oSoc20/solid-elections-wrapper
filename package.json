@@ -2,7 +2,7 @@
   "name": "solid-wrapper",
   "version": "0.1.0",
   "description": "Wrapper to create an app directory on a Solid Pod",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
