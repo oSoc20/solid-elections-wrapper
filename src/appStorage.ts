@@ -44,7 +44,7 @@ export async function initAppStorage(webID: string, appName: string, initEmpty: 
         }
     }
 
-    if(initEmpty) {
+    if(!initEmpty) {
         throw new Error("Application folder was not found inside the user's Solid Pod")
     }
 
