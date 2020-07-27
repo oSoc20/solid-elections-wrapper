@@ -192,7 +192,6 @@ interface CandidateInfo {
  * const candidateInfo = await getCandidateInfo(webId, 'solidelections', 'g103.ttl'));
  */
 export async function getCandidateInfo(webID: string, appName: string, formName: string): Promise<CandidateInfo> {
-    console.log("HERE");
     const appStorage = await initAppStorage(webID, appName, false)
     const documents = listDocuments(appStorage);
     const fileRef = getFileRef(documents, formName)

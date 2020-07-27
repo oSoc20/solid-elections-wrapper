@@ -268,9 +268,7 @@ function getCandidateInfo(webID, appName, formName) {
         var appStorage, documents, fileRef, form, expenses, totalExpenses, donations, totalDonations;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log("HERE");
-                    return [4 /*yield*/, initAppStorage(webID, appName, false)];
+                case 0: return [4 /*yield*/, initAppStorage(webID, appName, false)];
                 case 1:
                     appStorage = _a.sent();
                     documents = listDocuments(appStorage);
