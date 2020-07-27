@@ -1,5 +1,5 @@
 import {fetchDocument, createDocument, TripleDocument, TripleSubject, LocalTripleDocumentForContainer} from 'tripledoc';
-import {solid, space, rdf, ldp} from 'rdf-namespaces';
+import {solid, space, rdf, ldp, schema} from 'rdf-namespaces';
 import auth from 'solid-auth-client';
 
 /**
@@ -148,4 +148,97 @@ async function registerAppStorage(publicTypeIndex: TripleDocument, appName: stri
     appRegistration.addRef(solid.forClass, solid.instance);
     appRegistration.addRef(solid.instance, path);
     await publicTypeIndex.save([appRegistration]);
+}
+
+function createExpense(doc: TripleDocument, person: TripleSubject, buyActionData: Expense) {
+    const buyAction = doc.addSubject();
+    // Add triple Person agent <ref BuyAction>
+    person.addRef(schema.agent, buyAction.asRef());
+    // Set the type to BuyAction
+    buyAction.addRef(rdf.type, schema.BuyAction);
+    // Add all the triples needed to define the BuyAction
+    buyAction.addString(schema.identifier, buyActionData.identifier);
+    buyAction.addString(schema.description, buyActionData.description);
+    buyAction.addInteger(schema.price, buyActionData.price);
+    buyAction.addString(schema.priceCurrency, buyActionData.priceCurrency);
+    // Don't forget that it is not save yet, doc.save([buyAction]) must be called for that
+    return buyAction; 
+}
+
+interface Expense {
+    identifier: string;
+    description: string;
+    price: number;
+    priceCurrency: string;
+}
+
+interface CandidateInfo {
+    expenses: Expense[];
+    donations: Expense[];
+    totalExpenses: number;
+    totalDonations: number;
+}
+
+
+/**
+ * Get the candidate info from a WebID
+ *
+ * @param webID - WebID of the user that links to a Solid Pod
+ *                    
+ * @returns candidateInfo - Candidate information in the G103 form
+ *
+ * @example
+ * 
+ * const candidateInfo = await getCandidateInfo(webId, 'solidelections', 'g103.ttl'));
+ */
+export async function getCandidateInfo(webID: string, appName: string, formName: string): Promise<CandidateInfo> {
+    console.log("HERE");
+    const appStorage = await initAppStorage(webID, appName, false)
+    const documents = listDocuments(appStorage);
+    const fileRef = getFileRef(documents, formName)
+    if(!fileRef) {
+        return {expenses: [], donations: [], totalExpenses: 0, totalDonations: 0};
+    }
+    const form = await fetchDocument(fileRef);
+    const expenses = getExpenses(form, schema.BuyAction);
+    const totalExpenses = getSumPrice(expenses);
+    const donations = getExpenses(form, schema.DonateAction);
+    const totalDonations = getSumPrice(donations);
+    return {
+        expenses,
+        donations,
+        totalExpenses,
+        totalDonations,
+    }
+}
+
+function getFileName(docRef: string): string {
+    const split = docRef.lastIndexOf('/');
+    return docRef.substr(split + 1);
+}
+
+function getFileRef(documents: string[], filename: string): string | undefined {
+    for(const doc of documents) {
+        if(getFileName(doc) === filename) {
+            return doc;
+        }
+    }
+}
+
+function getExpenses(form: TripleDocument, type: string): Expense[] {
+    const buyActions = form.getAllSubjectsOfType(type);
+    return buyActions.map(buyAction => {
+        return {
+            identifier: buyAction.getString(schema.identifier) || "",
+            description: buyAction.getString(schema.description) || "",
+            price: buyAction.getInteger(schema.price) || 0,
+            priceCurrency: buyAction.getString(schema.priceCurrency) || "",
+        };
+    });
+}
+
+function getSumPrice(expenses: Expense[]): number {
+    return expenses
+        .map(expense => expense.price)
+        .reduce((acc, x) => acc + x);
 }

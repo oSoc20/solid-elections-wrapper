@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listDocuments = exports.createAppDocument = exports.initAppStorage = void 0;
+exports.getCandidateInfo = exports.listDocuments = exports.createAppDocument = exports.initAppStorage = void 0;
 var tripledoc_1 = require("tripledoc");
 var rdf_namespaces_1 = require("rdf-namespaces");
 var solid_auth_client_1 = __importDefault(require("solid-auth-client"));
@@ -237,4 +237,90 @@ function registerAppStorage(publicTypeIndex, appName, path) {
             }
         });
     });
+}
+function createExpense(doc, person, buyActionData) {
+    var buyAction = doc.addSubject();
+    // Add triple Person agent <ref BuyAction>
+    person.addRef(rdf_namespaces_1.schema.agent, buyAction.asRef());
+    // Set the type to BuyAction
+    buyAction.addRef(rdf_namespaces_1.rdf.type, rdf_namespaces_1.schema.BuyAction);
+    // Add all the triples needed to define the BuyAction
+    buyAction.addString(rdf_namespaces_1.schema.identifier, buyActionData.identifier);
+    buyAction.addString(rdf_namespaces_1.schema.description, buyActionData.description);
+    buyAction.addInteger(rdf_namespaces_1.schema.price, buyActionData.price);
+    buyAction.addString(rdf_namespaces_1.schema.priceCurrency, buyActionData.priceCurrency);
+    // Don't forget that it is not save yet, doc.save([buyAction]) must be called for that
+    return buyAction;
+}
+/**
+ * Get the candidate info from a WebID
+ *
+ * @param webID - WebID of the user that links to a Solid Pod
+ *
+ * @returns candidateInfo - Candidate information in the G103 form
+ *
+ * @example
+ *
+ * const candidateInfo = await getCandidateInfo(webId, 'solidelections', 'g103.ttl'));
+ */
+function getCandidateInfo(webID, appName, formName) {
+    return __awaiter(this, void 0, void 0, function () {
+        var appStorage, documents, fileRef, form, expenses, totalExpenses, donations, totalDonations;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("HERE");
+                    return [4 /*yield*/, initAppStorage(webID, appName, false)];
+                case 1:
+                    appStorage = _a.sent();
+                    documents = listDocuments(appStorage);
+                    fileRef = getFileRef(documents, formName);
+                    if (!fileRef) {
+                        return [2 /*return*/, { expenses: [], donations: [], totalExpenses: 0, totalDonations: 0 }];
+                    }
+                    return [4 /*yield*/, tripledoc_1.fetchDocument(fileRef)];
+                case 2:
+                    form = _a.sent();
+                    expenses = getExpenses(form, rdf_namespaces_1.schema.BuyAction);
+                    totalExpenses = getSumPrice(expenses);
+                    donations = getExpenses(form, rdf_namespaces_1.schema.DonateAction);
+                    totalDonations = getSumPrice(donations);
+                    return [2 /*return*/, {
+                            expenses: expenses,
+                            donations: donations,
+                            totalExpenses: totalExpenses,
+                            totalDonations: totalDonations,
+                        }];
+            }
+        });
+    });
+}
+exports.getCandidateInfo = getCandidateInfo;
+function getFileName(docRef) {
+    var split = docRef.lastIndexOf('/');
+    return docRef.substr(split + 1);
+}
+function getFileRef(documents, filename) {
+    for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
+        var doc = documents_1[_i];
+        if (getFileName(doc) === filename) {
+            return doc;
+        }
+    }
+}
+function getExpenses(form, type) {
+    var buyActions = form.getAllSubjectsOfType(type);
+    return buyActions.map(function (buyAction) {
+        return {
+            identifier: buyAction.getString(rdf_namespaces_1.schema.identifier) || "",
+            description: buyAction.getString(rdf_namespaces_1.schema.description) || "",
+            price: buyAction.getInteger(rdf_namespaces_1.schema.price) || 0,
+            priceCurrency: buyAction.getString(rdf_namespaces_1.schema.priceCurrency) || "",
+        };
+    });
+}
+function getSumPrice(expenses) {
+    return expenses
+        .map(function (expense) { return expense.price; })
+        .reduce(function (acc, x) { return acc + x; });
 }

@@ -54,3 +54,28 @@ export declare function createAppDocument(appStorage: TripleDocument, docName: s
  *
  */
 export declare function listDocuments(appStorage: TripleDocument): string[];
+interface Expense {
+    identifier: string;
+    description: string;
+    price: number;
+    priceCurrency: string;
+}
+interface CandidateInfo {
+    expenses: Expense[];
+    donations: Expense[];
+    totalExpenses: number;
+    totalDonations: number;
+}
+/**
+ * Get the candidate info from a WebID
+ *
+ * @param webID - WebID of the user that links to a Solid Pod
+ *
+ * @returns candidateInfo - Candidate information in the G103 form
+ *
+ * @example
+ *
+ * const candidateInfo = await getCandidateInfo(webId, 'solidelections', 'g103.ttl'));
+ */
+export declare function getCandidateInfo(webID: string, appName: string, formName: string): Promise<CandidateInfo>;
+export {};
