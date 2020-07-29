@@ -150,7 +150,7 @@ async function registerAppStorage(publicTypeIndex: TripleDocument, appName: stri
     await publicTypeIndex.save([appRegistration]);
 }
 
-function createExpense(doc: TripleDocument, person: TripleSubject, buyActionData: Expense) {
+export function createExpense(doc: TripleDocument, person: TripleSubject, buyActionData: Expense) {
     const buyAction = doc.addSubject();
     // Add triple Person agent <ref BuyAction>
     person.addRef(schema.agent, buyAction.asRef());
@@ -178,7 +178,6 @@ interface CandidateInfo {
     totalExpenses: number;
     totalDonations: number;
 }
-
 
 /**
  * Get the candidate info from a WebID
