@@ -229,7 +229,7 @@ function getExpenses(form: TripleDocument, type: string): Expense[] {
         return {
             identifier: buyAction.getString(schema.identifier) || "",
             description: buyAction.getString(schema.description) || "",
-            price: buyAction.getInteger(schema.price) || 0,
+            price: buyAction.getDecimal(schema.price) || buyAction.getInteger(schema.price) || 0,
             priceCurrency: buyAction.getString(schema.priceCurrency) || "",
         };
     });

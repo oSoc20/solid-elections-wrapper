@@ -1,4 +1,4 @@
-import { TripleDocument, LocalTripleDocumentForContainer } from 'tripledoc';
+import { TripleDocument, TripleSubject, LocalTripleDocumentForContainer } from 'tripledoc';
 /**
  * Initialize an app directory inside the Solid Pod found at the webID.
  *
@@ -54,6 +54,7 @@ export declare function createAppDocument(appStorage: TripleDocument, docName: s
  *
  */
 export declare function listDocuments(appStorage: TripleDocument): string[];
+export declare function createExpense(doc: TripleDocument, person: TripleSubject, buyActionData: Expense): TripleSubject;
 interface Expense {
     identifier: string;
     description: string;

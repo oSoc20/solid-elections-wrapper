@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCandidateInfo = exports.listDocuments = exports.createAppDocument = exports.initAppStorage = void 0;
+exports.getCandidateInfo = exports.createExpense = exports.listDocuments = exports.createAppDocument = exports.initAppStorage = void 0;
 var tripledoc_1 = require("tripledoc");
 var rdf_namespaces_1 = require("rdf-namespaces");
 var solid_auth_client_1 = __importDefault(require("solid-auth-client"));
@@ -252,6 +252,7 @@ function createExpense(doc, person, buyActionData) {
     // Don't forget that it is not save yet, doc.save([buyAction]) must be called for that
     return buyAction;
 }
+exports.createExpense = createExpense;
 /**
  * Get the candidate info from a WebID
  *
@@ -312,7 +313,7 @@ function getExpenses(form, type) {
         return {
             identifier: buyAction.getString(rdf_namespaces_1.schema.identifier) || "",
             description: buyAction.getString(rdf_namespaces_1.schema.description) || "",
-            price: buyAction.getInteger(rdf_namespaces_1.schema.price) || 0,
+            price: buyAction.getDecimal(rdf_namespaces_1.schema.price) || buyAction.getInteger(rdf_namespaces_1.schema.price) || 0,
             priceCurrency: buyAction.getString(rdf_namespaces_1.schema.priceCurrency) || "",
         };
     });
